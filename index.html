@@ -12,9 +12,22 @@
 	</head>
 
 	<body>
-
-		<video muted="muted" id="localVideo" autoplay playsinline></video>
-		<video id="remoteVideo" autoplay playsinline></video>
+		<div>
+			
+			<!-- Local video stream
+			 GRIFFIN CHANGE: Add mute so local sound isnt played back -->
+			<video muted="muted" id="localVideo" style="float:left" autoplay playsinline></video>
+			<!-- Local screen share -->
+			<video muted="muted" id="localVideoScreen" autoplay playsinline></video>
+			
+			<!-- Remote video stream -->
+			<video id="remoteVideo" style="float:left" autoplay playsinline></video>
+			<!-- Remote screen share -->
+			<video muted="muted" id="remoteVideoScreen" autoplay playsinline></video>
+			
+		</div>
+		
+		<br />
 
 		<div>
 			<p>
@@ -33,13 +46,18 @@
 
 		<script type="text/javascript">
 			'use strict';
-
+			
+			// GRIFFIN CHANGE: Add audio:true mediastream constraint to automatically enable sound with new streams
 			const mediaStreamConstraints = {video: true, audio: true};
+			const screenStreamConstraints = {video: { mediaSource: "screen" }}
 			const offerOptions = {offerToReceiveVideo:1};
 			const servers = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
 
 			const localVideo = document.getElementById('localVideo');
 			const remoteVideo = document.getElementById('remoteVideo');
+			
+			const localVideoScreen = document.getElementById('localVideoScreen');
+			const remoteVideoScreen = document.getElementById('remoteVideoScreen');
 
 			const localOffer = document.getElementById('localOffer');
 			const remoteOffer = document.getElementById('remoteOffer');
@@ -50,7 +68,7 @@
 			const remoteAnswer = document.getElementById('remoteAnswer');
 			const acceptAnswer = document.getElementById('acceptAnswer');
 
-			//	assign click handlers to each button
+			// Assign click handlers to each button
 			createOffer.addEventListener('click', offerCreate);
 			acceptOffer.addEventListener('click', offerAccept);
 			acceptAnswer.addEventListener('click', answerAccept);
@@ -62,11 +80,12 @@
 
 			peerConnection.addEventListener('icecandidate', handleConnection);
 			peerConnection.addEventListener('addstream', gotRemoteMediaStream);
+	
 			
 			const peerMediaStream = new MediaStream();
 			peerConnection.addStream(peerMediaStream);
 
-			// get the video media stream
+			// Get the video media stream
 			navigator.mediaDevices.getUserMedia(mediaStreamConstraints)
 				.then((mediaStream) => {
 				
@@ -75,8 +94,18 @@
 					for (const track of mediaStream.getTracks())
 						peerMediaStream.addTrack(track);
 					}
-				)
-				.catch(logError);
+				).catch(logError);
+				
+			// Get the screenshare media stream
+			navigator.mediaDevices.getDisplayMedia(screenStreamConstraints)
+				.then((mediaStream) => {
+				
+					localVideoScreen.srcObject = mediaStream;
+					
+					for (const track of mediaStream.getTracks())
+						peerMediaStream.addTrack(track);
+					}
+				).catch(logError);
 	
 			function handleConnection(event) {
 
@@ -103,10 +132,15 @@
 			function gotRemoteMediaStream(event) {
 
 				const mediaStream = event.stream;
-				console.log(event.stream.getTracks());
+				const mediaStreamScreen = new MediaStream();
 				
-				
+				if(mediaStream.getVideoTracks().length > 1) {
+					mediaStreamScreen.addTrack(mediaStream.getVideoTracks()[1]);
+					remoteVideoScreen.srcObject = mediaStreamScreen;
+				}
+				console.log(mediaStream.getTracks());
 				remoteVideo.srcObject = mediaStream;
+				
 				console.log('remote peer connection received remote stream')
 			}
 
