@@ -13,7 +13,7 @@
 
 	<body>
 
-		<video id="localVideo" autoplay playsinline></video>
+		<video muted="muted" id="localVideo" autoplay playsinline></video>
 		<video id="remoteVideo" autoplay playsinline></video>
 
 		<div>
@@ -34,7 +34,7 @@
 		<script type="text/javascript">
 			'use strict';
 
-			const mediaStreamConstraints = {video: true};
+			const mediaStreamConstraints = {video: true, audio: true};
 			const offerOptions = {offerToReceiveVideo:1};
 			const servers = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
 
@@ -103,6 +103,9 @@
 			function gotRemoteMediaStream(event) {
 
 				const mediaStream = event.stream;
+				console.log(event.stream.getTracks());
+				
+				
 				remoteVideo.srcObject = mediaStream;
 				console.log('remote peer connection received remote stream')
 			}
