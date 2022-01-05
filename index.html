@@ -7,26 +7,46 @@
 			video {
 				width: 320px;
 			}
+			.column {
+			  float: left;
+			  width: 50%;
+			}
+
+			/* Clear floats after the columns */
+			.row:after {
+			  content: "";
+			  display: table;
+			  clear: both;
+			}
 		</style>
 
 	</head>
 
 	<body>
-		
-		<div style="margin-bottom: 10px;">
-		<!-- Local video stream
-		 GRIFFIN CHANGE: Add mute so local sound isnt played back -->
-		<video muted="muted" id="localVideo" style="float:left" autoplay playsinline></video>
-		<!-- Local screen share -->
-		<video muted="muted" id="localVideoScreen" autoplay playsinline></video>
+	
+		<div class="row">
+			<div class="column">
+				<!-- Local video stream
+				GRIFFIN CHANGE: Add mute so local sound isnt played back -->
+				<video muted="muted" id="localVideo" style="float:left" autoplay playsinline></video>
+			</div>
+			<div class="column">
+				<!-- Local screen share -->
+				<video muted="muted" id="localVideoScreen" autoplay playsinline></video>
+			</div>
 		</div>
 		
-		<div style="margin-bottom: 10px;">
-		<!-- Remote video stream -->
-		<video id="remoteVideo" style="float:left" autoplay playsinline></video>
-		<!-- Remote screen share -->
-		<video muted="muted" id="remoteVideoScreen" autoplay playsinline></video>
+		<div class="row">
+			<div class="column">
+				<!-- Remote video stream -->
+				<video id="remoteVideo" style="float:left" autoplay playsinline></video>
+			</div>
+			<div class="column">
+				<!-- Remote screen share -->
+				<video muted="muted" id="remoteVideoScreen" autoplay playsinline></video>
+			</div>
 		</div>
+		
 		
 		<br />
 
