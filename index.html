@@ -3,6 +3,7 @@
 	<head>
 		<title>Peer to Peer Video</title>
 
+		<!-- A bit of new css for formatting -->
 		<style type="text/css">
 			video {
 				width: 320px;
@@ -27,7 +28,7 @@
 		<div class="row">
 			<div class="column">
 				<!-- Local video stream
-				GRIFFIN CHANGE: Add mute so local sound isnt played back -->
+				Add mute so local sound isnt played back -->
 				<video muted="muted" id="localVideo" style="float:left" autoplay playsinline></video>
 			</div>
 			<div class="column">
@@ -68,7 +69,7 @@
 		<script type="text/javascript">
 			'use strict';
 			
-			// GRIFFIN CHANGE: Add audio:true mediastream constraint to automatically enable sound with new streams
+			// Add audio:true mediastream constraint to automatically enable sound with new streams
 			const mediaStreamConstraints = {video: true, audio: true};
 			const screenStreamConstraints = {video: { mediaSource: "screen" }}
 			const offerOptions = {offerToReceiveVideo:1};
@@ -155,11 +156,13 @@
 				const mediaStream = event.stream;
 				const mediaStreamScreen = new MediaStream();
 				
+				// If multiple video tracks... screenshare is second so
+				// grab and assign to new stream, assign new stream to video element
 				if(mediaStream.getVideoTracks().length > 1) {
 					mediaStreamScreen.addTrack(mediaStream.getVideoTracks()[1]);
 					remoteVideoScreen.srcObject = mediaStreamScreen;
 				}
-				console.log(mediaStream.getTracks());
+				
 				remoteVideo.srcObject = mediaStream;
 				
 				console.log('remote peer connection received remote stream')
